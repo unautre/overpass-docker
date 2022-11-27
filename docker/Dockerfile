@@ -28,4 +28,5 @@ USER nginx
 COPY --from=builder /opt/osm3s/ /opt/osm3s/
 
 COPY 40-start-fcgi-wrapper.sh /docker-entrypoint.d/
+COPY fcgi-default.sh /etc/default/fcgiwrap
 COPY nginx-overpass.conf /etc/nginx/conf.d/

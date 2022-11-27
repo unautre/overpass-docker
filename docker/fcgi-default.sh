@@ -1,0 +1,1 @@
+PIDFILE=/tmp/fcgiwrap.pid
