@@ -29,6 +29,9 @@ spec:
         volumeMounts:
           - name: db-dir
             mountPath: /opt/osm/db
+        ports:
+          - containerPort: 8000
+            protocol: TCP
       volumes:
         - name: db-dir
           persistentVolumeClaim:
