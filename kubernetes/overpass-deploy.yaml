@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: overpass
+  labels:
+    app: overpass
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: overpass
+  template:
+    metadata:
+      labels:
+        app: overpass
+    spec:
+      containers:
+      - name: dispatcher
+        imagePullPolicy: Always
+        image: unautre/osm3s:latest
+        volumeMounts:
+          - name: db-dir
+            mountPath: /opt/osm/db
+        command: ["/opt/osm3s/bin/dispatcher", "--osm-base", "--db-dir=/opt/osm/db"]
+      - name: webserver
+        image: unautre/osm3s:latest
+        imagePullPolicy: Always
+        volumeMounts:
+          - name: db-dir
+            mountPath: /opt/osm/db
+      volumes:
+        - name: db-dir
+          persistentVolumeClaim:
+            claimName: osm3s-dbdir
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: osm3s-dbdir
+spec:
+  storageClassName: manual
+  resources:
+    requests:
+      storage: 250Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
