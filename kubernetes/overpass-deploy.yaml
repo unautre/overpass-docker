@@ -49,3 +49,37 @@ spec:
   volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: overpass-service
+spec:
+  selector:
+    app: overpass
+  ports:
+  - port: 8000
+    targetPort: 8000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+  name: overpass-ingress
+spec:
+  rules:
+  - host: overpass.dev.bandar-log.dev
+    http:
+      paths:
+        - pathType: Prefix
+          path: /
+          backend:
+            service:
+              name: overpass-service
+              port:
+                number: 8000
+  tls: # < placing a host in the TLS config will determine what ends up in the cert's subjectAltNames
+  - hosts:
+    - overpass.dev.bandar-log.dev
+    secretName: overpass-cert
